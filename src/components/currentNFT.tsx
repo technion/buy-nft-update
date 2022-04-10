@@ -4,9 +4,6 @@ import { ethers, providers } from 'ethers';
 
 import LolNFT from '../utils/LolNFT.json';
 
-// const OPENSEA_LINK =
-//  'https://testnets.opensea.io/assets/0x03628Ed1d3234c4dFe49517775b17C676B11c116/0';
-
 const CONTRACT_ADDRESS = '0x03628Ed1d3234c4dFe49517775b17C676B11c116';
 
 const gettokenURI = async (): Promise<string> => {

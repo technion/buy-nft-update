@@ -1,6 +1,6 @@
 export const AppConfig = {
-  site_name: 'Starter',
-  title: 'Nextjs Starter',
-  description: 'Starter code for your Nextjs Boilerplate with Tailwind CSS',
+  site_name: 'Lolware Mutable NFT Demo',
+  title: 'Mutable NFT URLs',
+  description: 'A site where you can buy updates to an NFT image',
   locale: 'en',
 };

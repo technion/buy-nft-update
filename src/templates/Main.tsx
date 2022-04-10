@@ -40,7 +40,7 @@ const Main = (props: IMainProps) => (
             <li className="mr-6">
               <a
                 className="text-gray-700 hover:text-gray-900 border-none"
-                href="https://github.com/ixartz/Next-js-Boilerplate"
+                href="https://github.com/technion/buy-nft-update"
               >
                 GitHub
               </a>

@@ -6,7 +6,7 @@ import LolNFT from '../utils/LolNFT.json';
 
 const CONTRACT_ADDRESS = '0x03628Ed1d3234c4dFe49517775b17C676B11c116';
 
-const encodeTokenURI = (uri) => {
+const encodeTokenURI = (uri: any) => {
   const metadata = {
     name: 'LolNFT',
     description: 'A pay for update ',
