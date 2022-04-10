@@ -20,12 +20,11 @@ const Index = () => {
         />
       }
     >
-      <a href="https://github.com/ixartz/Next-js-Boilerplate">
-        <img
-          src={`${router.basePath}/assets/images/nextjs-starter-banner.png`}
-          alt="Nextjs starter banner"
-        />
-      </a>
+      <img
+        src={`${router.basePath}/assets/mutable-nft-logo.png`}
+        alt="Nextjs starter banner"
+      />
+
       <h1 className="text-2xl font-bold">
         Live NFT Updates shown in below image
       </h1>
