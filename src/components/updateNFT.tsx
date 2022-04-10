@@ -60,12 +60,14 @@ const UpdateNFT = () => {
     const { ethereum } = window as any; // Typescript doesn't know about the Metamask extension
     if (!ethereum) {
       setConnectStatus('NO WALLET');
+      return;
     }
 
     const checkIfWalletIsConnected = async () => {
       const accounts = await ethereum.request({ method: 'eth_accounts' });
       if (accounts.length === 0) {
         setConnectStatus('NOT CONNECTED');
+        return;
       }
       setConnectStatus(accounts[0]);
     };

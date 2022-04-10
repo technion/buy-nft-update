@@ -38,6 +38,7 @@ const Index = () => {
         <span role="img" aria-label="zap">
           ⚡️
         </span>
+        Cat pictures recommended for updates!
       </p>
       <CurrentNFT />
       <UpdateNFT />
@@ -55,8 +56,14 @@ const Index = () => {
           <span role="img" aria-label="tada">
             🎉
           </span>{' '}
-          View the <a href={OPENSEA_LINK}></a>
-          contract on Opensea
+          View the <a href={OPENSEA_LINK}>contract on Opensea</a>
+        </li>
+        <li>
+          <span role="img" aria-label="fox_face">
+            🦊
+          </span>{' '}
+          For obvious reasons I cannot prevent a person making this page NSFW,
+          please consider this when accessing
         </li>
       </ul>
 
@@ -65,11 +72,11 @@ const Index = () => {
         <a href="https://github.com/ixartz/Next-js-Boilerplate">
           Nextjs Boilerplate
         </a>
-        . You can also browse our{' '}
+        . You can also browse their{' '}
         <a href="https://creativedesignsguru.com/category/nextjs/">
           Premium NextJS Templates
         </a>{' '}
-        on our website to support this project.
+        on their website to support their project.
       </p>
     </Main>
   );
