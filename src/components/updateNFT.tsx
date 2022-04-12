@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { ethers } from 'ethers';
 
+import { Getmetamask } from '@/components/Getmetamask';
+
 import LolNFT from '../utils/LolNFT.json';
 
 const CONTRACT_ADDRESS = '0x03628Ed1d3234c4dFe49517775b17C676B11c116';
@@ -78,7 +80,7 @@ const UpdateNFT = () => {
     return <>Page Loading</>;
   }
   if (connectStatus === 'NO WALLET') {
-    return <>Please install Metamask!</>;
+    return <Getmetamask />;
   }
   if (connectStatus === 'NOT CONNECTED') {
     return (

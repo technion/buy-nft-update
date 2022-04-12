@@ -22,7 +22,7 @@ const Index = () => {
     >
       <img
         src={`${router.basePath}/assets/mutable-nft-logo.png`}
-        alt="Nextjs starter banner"
+        alt="Mutable NFT Project"
       />
 
       <h1 className="text-2xl font-bold">
@@ -65,18 +65,6 @@ const Index = () => {
           please consider this when accessing
         </li>
       </ul>
-
-      <p>
-        Website was built using{' '}
-        <a href="https://github.com/ixartz/Next-js-Boilerplate">
-          Nextjs Boilerplate
-        </a>
-        . You can also browse their{' '}
-        <a href="https://creativedesignsguru.com/category/nextjs/">
-          Premium NextJS Templates
-        </a>{' '}
-        on their website to support their project.
-      </p>
     </Main>
   );
 };
