@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import { Getmetamask } from '@/components/Getmetamask';
 
 import LolNFT from '../utils/LolNFT.json';
+import { ConnectButton } from './ConnectButton';
 
 const CONTRACT_ADDRESS = '0x03628Ed1d3234c4dFe49517775b17C676B11c116';
 
@@ -51,12 +52,15 @@ const UpdateNFT = () => {
     }
   };
 
-  const connectWallet = async () => {
+  const connectWallet = () => {
     // The flow of this component is such that this function should only be called after the ethereum object is confirmed
     // So we can expect the object to exist
     const { ethereum } = window as any; // Typescript doesn't know about the Metamask extension
-    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    setConnectStatus(accounts[0]);
+    ethereum
+      .request({ method: 'eth_requestAccounts' })
+      .then((accounts: any) => {
+        setConnectStatus(accounts[0]);
+      });
   };
   useEffect(() => {
     const { ethereum } = window as any; // Typescript doesn't know about the Metamask extension
@@ -83,14 +87,7 @@ const UpdateNFT = () => {
     return <Getmetamask />;
   }
   if (connectStatus === 'NOT CONNECTED') {
-    return (
-      <button
-        className="cta-button connect-wallet-button"
-        onClick={connectWallet}
-      >
-        Connect to Wallet
-      </button>
-    );
+    return <ConnectButton connect={connectWallet} />;
   }
   return (
     <>
