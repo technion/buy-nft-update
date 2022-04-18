@@ -6,6 +6,7 @@ import { Getmetamask } from '@/components/Getmetamask';
 
 import LolNFT from '../utils/LolNFT.json';
 import { ConnectButton } from './ConnectButton';
+import { UpdateURIForm } from './UpdateURIForm';
 
 const CONTRACT_ADDRESS = '0x03628Ed1d3234c4dFe49517775b17C676B11c116';
 
@@ -23,10 +24,14 @@ const encodeTokenURI = (uri: any) => {
 const UpdateNFT = () => {
   const [connectStatus, setConnectStatus] = useState<string | null>(null);
 
-  const submitURIUpdate = async (form: any) => {
-    // TODO: ANY
+  const submitURIUpdate = async (form: React.SyntheticEvent) => {
+    // Typing: https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/forms_and_events/
     form.preventDefault();
-    const newURI = encodeTokenURI(form.target.uri.value.trim());
+    const target = form.target as typeof form.target & {
+      uri: { value: string };
+    };
+
+    const newURI = encodeTokenURI(target.uri.value.trim());
     try {
       const { ethereum } = window as any;
       if (!ethereum) {
@@ -42,7 +47,6 @@ const UpdateNFT = () => {
       const nftTxn = await connectedContract.buyURLUpdate(0, newURI, {
         value: 4,
       });
-      // console.log("Calling URI Update...please wait.");
       await nftTxn.wait();
       console.log(
         `Updated, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`
@@ -89,6 +93,7 @@ const UpdateNFT = () => {
   if (connectStatus === 'NOT CONNECTED') {
     return <ConnectButton connect={connectWallet} />;
   }
+  /*
   return (
     <>
       <form onSubmit={submitURIUpdate}>
@@ -100,6 +105,8 @@ const UpdateNFT = () => {
       You are logged in! Welcome account {connectStatus}
     </>
   );
+  */
+  return <UpdateURIForm submitURIUpdate={submitURIUpdate} />;
 };
 
 export { UpdateNFT };
