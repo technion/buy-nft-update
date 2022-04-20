@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { ethers } from 'ethers';
 
@@ -10,7 +10,7 @@ import { UpdateURIForm } from './UpdateURIForm';
 
 const CONTRACT_ADDRESS = '0x03628Ed1d3234c4dFe49517775b17C676B11c116';
 
-const encodeTokenURI = (uri: any) => {
+const encodeTokenURI = (uri: string) => {
   const metadata = {
     name: 'LolNFT',
     description: 'A pay for update ',
@@ -21,8 +21,18 @@ const encodeTokenURI = (uri: any) => {
   )}`;
 };
 
+type UpdateState =
+  | 'NO WALLET'
+  | 'NOT CONNECTED'
+  | 'CONNECTED'
+  | 'UPDATED'
+  | 'CONFIRMED';
+
 const UpdateNFT = () => {
-  const [connectStatus, setConnectStatus] = useState<string | null>(null);
+  const [connectStatus, setConnectStatus] = useState<{
+    UpdateState: UpdateState;
+    message?: string;
+  } | null>(null);
 
   const submitURIUpdate = async (form: React.SyntheticEvent) => {
     // Typing: https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/forms_and_events/
@@ -44,13 +54,18 @@ const UpdateNFT = () => {
         LolNFT.abi,
         signer
       );
+      setConnectStatus({
+        UpdateState: 'UPDATED',
+        message: 'Sending update, please await execution...',
+      });
       const nftTxn = await connectedContract.buyURLUpdate(0, newURI, {
         value: 4,
       });
       await nftTxn.wait();
-      console.log(
-        `Updated, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`
-      );
+      setConnectStatus({
+        UpdateState: 'UPDATED',
+        message: `NFT Updated, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -63,50 +78,99 @@ const UpdateNFT = () => {
     ethereum
       .request({ method: 'eth_requestAccounts' })
       .then((accounts: any) => {
-        setConnectStatus(accounts[0]);
+        setConnectStatus({ UpdateState: 'CONNECTED', message: accounts[0] });
       });
   };
+
+  const respondEvent = (from: string, tokenId: number) => {
+    console.log(
+      `Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId}`
+    );
+    setConnectStatus({
+      UpdateState: 'CONFIRMED',
+      message: `Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId}`,
+    });
+  };
+
+  const setupEventListener = useCallback(async () => {
+    try {
+      const { ethereum } = window as any; // Typescript doesn't know about the Metamask extension
+      if (!ethereum) {
+        throw Error('Metamask extension not found');
+      }
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+      const connectedContract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        LolNFT.abi,
+        signer
+      );
+
+      connectedContract.on('LolUpdatedURI', respondEvent);
+      return connectedContract;
+    } catch (e) {
+      // No error worth catching here. Simply don't run the event listener.
+    }
+    return null;
+  }, []);
+
   useEffect(() => {
     const { ethereum } = window as any; // Typescript doesn't know about the Metamask extension
     if (!ethereum) {
-      setConnectStatus('NO WALLET');
+      setConnectStatus({ UpdateState: 'NO WALLET' });
       return;
     }
 
     const checkIfWalletIsConnected = async () => {
       const accounts = await ethereum.request({ method: 'eth_accounts' });
       if (accounts.length === 0) {
-        setConnectStatus('NOT CONNECTED');
+        setConnectStatus({ UpdateState: 'NOT CONNECTED' });
         return;
       }
-      setConnectStatus(accounts[0]);
+      setConnectStatus({ UpdateState: 'CONNECTED', message: accounts[0] });
     };
     checkIfWalletIsConnected();
   }, []);
 
+  useEffect(() => {
+    // Setup the event listener. We retain the object so we can clear it after an unmount
+    let contract: ethers.Contract | null;
+    if (connectStatus?.UpdateState === 'CONNECTED') {
+      setupEventListener().then((c) => {
+        contract = c;
+      });
+    }
+    return () => {
+      contract?.removeListener('LolUpdatedURI', respondEvent);
+    };
+  }, [connectStatus, setupEventListener]);
+
   if (connectStatus == null) {
     return <>Page Loading</>;
   }
-  if (connectStatus === 'NO WALLET') {
+  if (connectStatus.UpdateState === 'NO WALLET') {
     return <Getmetamask />;
   }
-  if (connectStatus === 'NOT CONNECTED') {
+  if (connectStatus.UpdateState === 'NOT CONNECTED') {
     return <ConnectButton connect={connectWallet} />;
   }
-  /*
-  return (
-    <>
-      <form onSubmit={submitURIUpdate}>
-        <input id="uri" type="text" required />
-        <button type="submit" className="cta-button connect-wallet-button">
-          Submit
-        </button>
-      </form>
-      You are logged in! Welcome account {connectStatus}
-    </>
-  );
-  */
-  return <UpdateURIForm submitURIUpdate={submitURIUpdate} />;
+  if (connectStatus.UpdateState === 'CONNECTED') {
+    // connectStatus.message can't actually be undefined here - it's allowed to be undefined to suit other status codes
+    // The || ensures Typescript knows something will be sent here and the account parameter must be some form of string
+    return (
+      <UpdateURIForm
+        submitURIUpdate={submitURIUpdate}
+        account={connectStatus.message || ''}
+      />
+    );
+  }
+  if (connectStatus.UpdateState === 'UPDATED') {
+    return <>{connectStatus.message}</>;
+  }
+  if (connectStatus.UpdateState === 'CONFIRMED') {
+    return <>{connectStatus.message}</>;
+  }
+  return Error('Unmatched code');
 };
 
 export { UpdateNFT };

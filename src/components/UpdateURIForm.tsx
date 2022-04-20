@@ -1,11 +1,14 @@
 const UpdateURIForm = ({
   submitURIUpdate,
+  account,
 }: {
   submitURIUpdate: (e: any) => void;
+  account: string;
 }) => {
   return (
     <section className="text-blueGray-700">
       <div className="container items-center py-12 px-5 lg:px-20">
+        Welcome account {account}
         <div className="relative my-4">
           <div className="flex absolute inset-0 items-center">
             <div className="w-full border-t border-gray-300"></div>
