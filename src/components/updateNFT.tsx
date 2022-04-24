@@ -64,7 +64,7 @@ const UpdateNFT = () => {
       await nftTxn.wait();
       setConnectStatus({
         UpdateState: 'UPDATED',
-        message: `NFT Updated, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`,
+        message: `NFT Update processed, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`,
       });
     } catch (error) {
       console.log(error);
@@ -82,13 +82,10 @@ const UpdateNFT = () => {
       });
   };
 
-  const respondEvent = (from: string, tokenId: number) => {
-    console.log(
-      `Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId}`
-    );
+  const respondEvent = (_from: string, tokenId: ethers.BigNumber) => {
     setConnectStatus({
       UpdateState: 'CONFIRMED',
-      message: `Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId}`,
+      message: `Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`,
     });
   };
 
@@ -165,10 +162,34 @@ const UpdateNFT = () => {
     );
   }
   if (connectStatus.UpdateState === 'UPDATED') {
-    return <>{connectStatus.message}</>;
+    return (
+      <div className="relative my-4">
+        <div className="flex absolute inset-0 items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="flex relative justify-center text-sm">
+          <span className="px-2 text-neutral-600 bg-white">
+            {' '}
+            {connectStatus.message}{' '}
+          </span>
+        </div>
+      </div>
+    );
   }
   if (connectStatus.UpdateState === 'CONFIRMED') {
-    return <>{connectStatus.message}</>;
+    return (
+      <div className="relative my-4">
+        <div className="flex absolute inset-0 items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="flex relative justify-center text-sm">
+          <span className="px-2 text-neutral-600 bg-white">
+            {' '}
+            {connectStatus.message}{' '}
+          </span>
+        </div>
+      </div>
+    );
   }
   return Error('Unmatched code');
 };
